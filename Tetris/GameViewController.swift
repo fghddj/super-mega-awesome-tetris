@@ -9,61 +9,49 @@
 import UIKit
 import SpriteKit
 
-extension SKNode {
-    class func unarchiveFromFile(file : NSString) -> SKNode? {
-        if let path = NSBundle.mainBundle().pathForResource(file, ofType: "sks") {
-            var sceneData = NSData.dataWithContentsOfFile(path, options: .DataReadingMappedIfSafe, error: nil)
-            var archiver = NSKeyedUnarchiver(forReadingWithData: sceneData)
-            
-            archiver.setClass(self.classForKeyedUnarchiver(), forClassName: "SKScene")
-            let scene = archiver.decodeObjectForKey(NSKeyedArchiveRootObjectKey) as GameScene
-            archiver.finishDecoding()
-            return scene
-        } else {
-            return nil
-        }
-    }
-}
+
 
 class GameViewController: UIViewController {
 
+    var scene: GameScene!
+    var gameMaster:GameMaster!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        if let scene = GameScene.unarchiveFromFile("GameScene") as? GameScene {
-            // Configure the view.
-            let skView = self.view as SKView
-            skView.showsFPS = true
-            skView.showsNodeCount = true
-            
-            /* Sprite Kit applies additional optimizations to improve rendering performance */
-            skView.ignoresSiblingOrder = true
-            
-            /* Set the scale mode to scale to fit the window */
-            scene.scaleMode = .AspectFill
-            
-            skView.presentScene(scene)
+        
+        // postavi view
+        let skView = view as SKView
+        skView.multipleTouchEnabled = false
+        
+        // postavi sceno
+        scene = GameScene(size: skView.bounds.size)
+        scene.scaleMode = .AspectFill
+        
+        scene.nihaj = didTick
+        
+        gameMaster = GameMaster()
+        gameMaster.zacniIgro()
+        
+        // pokazi sceno
+        skView.presentScene(scene)
+        
+        scene.dodajPreviewOblikoNaSceno(gameMaster.naslednjaOblika!) {
+            self.gameMaster.naslednjaOblika?.premakniNa(startingColumn, row: startingRow)
+            self.scene.premikPreviewOblika(self.gameMaster.naslednjaOblika!) {
+                let naslednjeOblike = self.gameMaster.novaOblika()
+                self.scene.zacniNihaj()
+                self.scene.dodajPreviewOblikoNaSceno(naslednjeOblike.naslednjaOblika!) {}
+            }
         }
     }
-
-    override func shouldAutorotate() -> Bool {
-        return true
-    }
-
-    override func supportedInterfaceOrientations() -> Int {
-        if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
-            return Int(UIInterfaceOrientationMask.AllButUpsideDown.toRaw())
-        } else {
-            return Int(UIInterfaceOrientationMask.All.toRaw())
-        }
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Release any cached data, images, etc that aren't in use.
-    }
-
+    
+ 
     override func prefersStatusBarHidden() -> Bool {
         return true
+    }
+    
+    func didTick() {
+        gameMaster.padajocaOblika?.padeZaEnoVrstico()
+        scene.redrawOblika(gameMaster.padajocaOblika!, completion: {})
     }
 }
