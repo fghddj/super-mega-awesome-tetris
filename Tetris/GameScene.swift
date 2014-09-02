@@ -90,18 +90,18 @@ class GameScene: SKScene {
             
             sprite.alpha = 0
             
-            let premikAction = SKAction.moveTo(pointForColumn(block.column, row:block.row), duration: NSTimeInterval(0.2))
-            premikAction.timingMode = .EaseOut
+            let moveAction = SKAction.moveTo(pointForColumn(block.column, row:block.row), duration: NSTimeInterval(0.2))
+            moveAction.timingMode = .EaseOut
             let fadeInAction = SKAction.fadeAlphaTo(0.7, duration: 0.4)
             fadeInAction.timingMode = .EaseOut
-            sprite.runAction(SKAction.group([premikAction, fadeInAction]))
+            sprite.runAction(SKAction.group([moveAction, fadeInAction]))
         }	
         runAction(SKAction.waitForDuration(0.4), completion: completion)
     }
     
     func premikPreviewOblika(oblika:Oblika, completion:() -> ()) {
         for (idx, block) in enumerate(oblika.blocks) {
-            let sprite = block.sprite
+            let sprite = block.sprite!
             let moveTo = pointForColumn(block.column, row: block.row)
             let moveToAction:SKAction = SKAction.moveTo(moveTo, duration: 0.2)
             moveToAction.timingMode = .EaseOut
@@ -113,7 +113,7 @@ class GameScene: SKScene {
     
     func redrawOblika(oblika:Oblika, completion: () -> ()) {
         for (idx, block) in enumerate(oblika.blocks) {
-            let sprite = block.sprite
+            let sprite = block.sprite!
             let moveTo = pointForColumn(block.column, row:block.row)
             let moveToAction:SKAction = SKAction.moveTo(moveTo, duration: 0.05)
             moveToAction.timingMode = .EaseOut

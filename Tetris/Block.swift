@@ -17,17 +17,17 @@ enum BlockColor: Int, Printable {
     var spriteIme: String {
         switch self {
         case .Blue:
-            return "modra"
+            return "blue"
         case .Orange:
-            return "oranzna"
+            return "orange"
         case .Purple:
-            return "vijolicna"
+            return "purple"
         case .Red:
-            return "rdeca"
+            return "red"
         case .Teal:
             return "teal"
         case .Yellow:
-            return "rumena"
+            return "yellow"
         }
     }
     
