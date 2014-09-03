@@ -110,8 +110,32 @@ class Oblika: Hashable, Printable {
         }
     }
     
+    final func rotirajClockwise() {
+        let novaOrientacija = Orientacija.rotate(orientacija, clockwise: true)
+        rotirajBlocks(novaOrientacija)
+        orientacija = novaOrientacija
+    }
+    
+    final func rotirajCounterClockwise() {
+        let novaOrientacija = Orientacija.rotate(orientacija, clockwise: false)
+        rotirajBlocks(novaOrientacija)
+        orientacija = novaOrientacija
+    }
+    
     final func padeZaEnoVrstico() {
         premakniZa(0, rows:1)
+    }
+    
+    final func zvisaZaEnoVrstico() {
+        premakniZa(0, rows: -1)
+    }
+    
+    final func desnoZaEnStolpec() {
+        premakniZa(1, rows: 0)
+    }
+    
+    final func levoZaEnStolpec() {
+        premakniZa(-1, rows: 0)
     }
     
     final func premakniZa(columns: Int, rows: Int) {
