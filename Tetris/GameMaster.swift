@@ -8,7 +8,7 @@
 
 import Foundation
 
-let numColumns = 20
+let numColumns = 10
 let numRows = 20
 
 let startingColumn = 4
@@ -118,6 +118,80 @@ class GameMaster {
         score = 0
         level = 1
         delegate?.igraSeKoncala(self)
+    }
+    
+    // 2 Arraya shranjujeta vrstice, ki jih je user odstranil
+    func odstraniPolnoVrstico() -> (vrsticeOdstranjene: Array<Array<Block>>, padliBlocks: Array<Array<Block>>) {
+        var odstranjeneVrstice = Array<Array<Block>>()
+        for var row = numRows - 1; row > 0; row-- {
+            var rowOfBlocks = Array<Block>()
+            
+            for column in 0 ..< numColumns {
+                if let block = blockArray[column, row] {
+                    rowOfBlocks.append(block)
+                }
+            }
+            if rowOfBlocks.count == numColumns {
+                odstranjeneVrstice.append(rowOfBlocks)
+                for block in rowOfBlocks {
+                    blockArray[block.column, block.row] = nil
+                }
+            }
+        }
+        
+        // Ali smo dobili kaksne vrstice?
+        if odstranjeneVrstice.count == 0 {
+            return ([], [])
+        }
+        
+        // Dodaj tocke glede na stevilo odstranjenih vrstic * level
+        let tockeDobljene = odstranjeneVrstice.count * TockeNaVrstico * level
+        score += tockeDobljene
+        if score >= level * TockeZaLevel {
+            level += 1
+            delegate?.igraLevelUp(self)
+        }
+        
+        var padleBlocks = Array<Array<Block>>()
+        for column in 0 ..< numColumns {
+            var padleBlocksArray = Array<Block>()
+            
+            // zacni v spodnjem levem kotu takoj nad odstranjeno vrstico, stej do vrha in znizaj vsak block, ki ga najdes
+            // padleBlocks je array array-ev, vsak sub-array je napolnjen z blocks, ki so padli na nove polozaje
+            for var row = odstranjeneVrstice[0][0].row - 1; row > 0; row-- {
+                if let block = blockArray[column, row] {
+                    var newRow = row
+                    while (newRow < numRows - 1 && blockArray[column, newRow + 1] == nil) {
+                        newRow++
+                    }
+                    block.row = newRow
+                    blockArray[column, row] = nil
+                    blockArray[column, newRow] = block
+                    padleBlocksArray.append(block)
+                }
+            }
+            if padleBlocksArray.count > 0 {
+                padleBlocks.append(padleBlocksArray)
+            }
+        }
+        return (odstranjeneVrstice, padleBlocks)
+    }
+    
+    // naredi nove vrstice blocks, da zginejo iz igralne povrsine
+    // sprazni vsako lokacijo v blocks array-u za novo igro
+    func odstraniVseBlocks() -> Array<Array<Block>> {
+        var vsiBlocks = Array<Array<Block>>()
+        for row in 0 ..< numRows {
+            var rowOfBlocks = Array<Block>()
+            for column in 0 ..< numColumns {
+                if let block = blockArray[column, row] {
+                    rowOfBlocks.append(block)
+                    blockArray[column, row] = nil
+                }
+            }
+            vsiBlocks.append(rowOfBlocks)
+        }
+        return vsiBlocks
     }
     
     func dropOblika() {

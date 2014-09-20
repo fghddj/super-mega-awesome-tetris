@@ -11,7 +11,7 @@ import SpriteKit
 
 
 
-class GameViewController: UIViewController {
+class GameViewController: UIViewController, GameMasterDelegate {
 
     var scene: GameScene!
     var gameMaster:GameMaster!
@@ -35,6 +35,7 @@ class GameViewController: UIViewController {
         // pokazi sceno
         skView.presentScene(scene)
         
+        /*
         scene.dodajPreviewOblikoNaSceno(gameMaster.naslednjaOblika!) {
             self.gameMaster.naslednjaOblika?.premakniNa(startingColumn, row: startingRow)
             self.scene.premikPreviewOblika(self.gameMaster.naslednjaOblika!) {
@@ -43,6 +44,7 @@ class GameViewController: UIViewController {
                 self.scene.dodajPreviewOblikoNaSceno(naslednjeOblike.naslednjaOblika!) {}
             }
         }
+        */
     }
     
  
@@ -51,7 +53,51 @@ class GameViewController: UIViewController {
     }
     
     func didTick() {
-        gameMaster.padajocaOblika?.padeZaEnoVrstico()
-        scene.redrawOblika(gameMaster.padajocaOblika!, completion: {})
+        gameMaster.pustiOblikaPada()
+    }
+    
+    func naslednjaOblika() {
+        let noveOblike = gameMaster.novaOblika()
+        if let padajocaOblika = noveOblike.padajocaOblika {
+            self.scene.dodajPreviewOblikoNaSceno(noveOblike.naslednjaOblika!) {}
+            self.scene.premikPreviewOblika(padajocaOblika) {
+                // bool da lahko prekinemo interakcijo z view med animacijami in kalkulacijami
+                // da se izognemo nepredvidenim igralnim stanjem
+                self.view.userInteractionEnabled = true
+                self.scene.zacniNihaj()
+            }
+        }
+    }
+    
+    func igraSeZacne(gameMaster: GameMaster) {
+        if gameMaster.naslednjaOblika != nil && gameMaster.naslednjaOblika!.blocks[0].sprite == nil {
+            scene.dodajPreviewOblikoNaSceno(gameMaster.naslednjaOblika!) {
+                self.naslednjaOblika()
+            }
+        } else {
+            naslednjaOblika()
+        }
+    }
+    
+    func igraSeKoncala(gameMaster: GameMaster) {
+        view.userInteractionEnabled = false
+        scene.stopNihaj()
+    }
+    
+    func igraLevelUp(gameMaster: GameMaster) {
+        
+    }
+    
+    func igraOblikaDrop(gameMaster: GameMaster) {
+        
+    }
+    
+    func igraOblikaPristane(gameMaster: GameMaster) {
+        scene.stopNihaj()
+        naslednjaOblika()
+    }
+     // redraw sprite na novih lokacijah
+    func igraOblikaPremika(gameMaster: GameMaster) {
+        scene.redrawOblika(gameMaster.padajocaOblika!) {}
     }
 }
