@@ -11,10 +11,12 @@ import SpriteKit
 
 
 
-class GameViewController: UIViewController, GameMasterDelegate {
+class GameViewController: UIViewController, GameMasterDelegate, UIGestureRecognizerDelegate {
 
     var scene: GameScene!
     var gameMaster:GameMaster!
+    
+    var panPointReference:CGPoint?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,6 +53,35 @@ class GameViewController: UIViewController, GameMasterDelegate {
     override func prefersStatusBarHidden() -> Bool {
         return true
     }
+    
+    
+    @IBAction func didTap(sender: UITapGestureRecognizer) {
+        gameMaster.rotirajObliko()
+    }
+    
+    @IBAction func didPan(sender: UIPanGestureRecognizer) {
+        
+        //2
+        let trenutnaTocka = sender.translationInView(self.view)
+        if let originalTocka = panPointReference {
+            
+            //3
+            if abs(trenutnaTocka.x - originalTocka.x) > (BlockSize * 0.9) {
+                
+                //4
+                if sender.velocityInView(self.view).x > CGFloat(0) {
+                    gameMaster.premakniOblikoDesno()
+                    panPointReference = trenutnaTocka
+                } else {
+                    gameMaster.premakniOblikoLevo()
+                    panPointReference = trenutnaTocka
+                }
+            }
+        } else if sender.state == .Began {
+            panPointReference = trenutnaTocka
+        }
+    }
+    
     
     func didTick() {
         gameMaster.pustiOblikaPada()

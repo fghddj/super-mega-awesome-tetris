@@ -16,9 +16,25 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <gestureRecognizers/>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="heL-pP-kSu" appends="YES" id="UOp-2L-gPi"/>
+                            <outletCollection property="gestureRecognizers" destination="dOG-pb-71a" appends="YES" id="fT0-pf-cJy"/>
+                        </connections>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="btX-cZ-eVz" sceneMemberID="firstResponder"/>
+                <tapGestureRecognizer id="heL-pP-kSu">
+                    <connections>
+                        <action selector="didTap:" destination="LVB-YS-i5n" id="h01-c2-Hhb"/>
+                        <outlet property="delegate" destination="LVB-YS-i5n" id="89a-Bp-kS2"/>
+                    </connections>
+                </tapGestureRecognizer>
+                <panGestureRecognizer minimumNumberOfTouches="1" id="dOG-pb-71a">
+                    <connections>
+                        <action selector="didPan:" destination="LVB-YS-i5n" id="sS6-IN-BxL"/>
+                    </connections>
+                </panGestureRecognizer>
             </objects>
         </scene>
     </scenes>
